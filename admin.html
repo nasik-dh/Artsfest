@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Arts Festival 2024</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Arts Festival 2024</div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="admin.html" class="active">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="admin-panel">
+        <h1>Admin Panel</h1>
+        
+        <div class="admin-tabs">
+            <button class="tab-button active" onclick="showTab('candidates')">Manage Candidates</button>
+            <button class="tab-button" onclick="showTab('programs')">Manage Programs</button>
+            <button class="tab-button" onclick="showTab('results')">Add Results</button>
+            <button class="tab-button" onclick="showTab('schedule')">Schedule</button>
+        </div>
+
+        <!-- Candidates Tab -->
+        <div id="candidatesTab" class="tab-content active">
+            <h2>Add New Candidate</h2>
+            <form id="candidateForm">
+                <input type="text" id="candidateName" placeholder="Candidate Name" required>
+                <select id="candidateTeam" required>
+                    <option value="">Select Team</option>
+                </select>
+                <input type="url" id="candidateImage" placeholder="Image URL (optional)">
+                <button type="submit">Add Candidate</button>
+            </form>
+            
+            <h3>All Candidates</h3>
+            <div id="candidatesList"></div>
+        </div>
+
+        <!-- Programs Tab -->
+        <div id="programsTab" class="tab-content">
+            <h2>Add New Program</h2>
+            <form id="programForm">
+                <input type="text" id="programName" placeholder="Program Name" required>
+                <select id="programCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="stage">Stage</option>
+                    <option value="non-stage">Non-Stage</option>
+                    <option value="sports">Sports</option>
+                </select>
+                <input type="number" id="minParticipants" placeholder="Min Participants" required>
+                <input type="number" id="maxParticipants" placeholder="Max Participants" required>
+                <input type="text" id="programVenue" placeholder="Venue" required>
+                <button type="submit">Add Program</button>
+            </form>
+            
+            <h3>All Programs</h3>
+            <div id="programsList"></div>
+        </div>
+
+        <!-- Results Tab -->
+        <div id="resultsTab" class="tab-content">
+            <h2>Add Result</h2>
+            <form id="resultForm">
+                <select id="resultCandidate" required>
+                    <option value="">Select Candidate</option>
+                </select>
+                <select id="resultProgram" required>
+                    <option value="">Select Program</option>
+                </select>
+                <select id="resultPosition">
+                    <option value="">Position (optional)</option>
+                    <option value="1">1st</option>
+                    <option value="2">2nd</option>
+                    <option value="3">3rd</option>
+                </select>
+                <select id="resultGrade">
+                    <option value="">Grade (optional)</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                </select>
+                <button type="submit">Add Result</button>
+            </form>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="scheduleTab" class="tab-content">
+            <h2>Add Schedule</h2>
+            <form id="scheduleForm">
+                <select id="scheduleProgram" required>
+                    <option value="">Select Program</option>
+                </select>
+                <input type="date" id="scheduleDate" required>
+                <input type="time" id="startTime" required>
+                <input type="time" id="endTime" required>
+                <input type="text" id="scheduleVenue" placeholder="Venue" required>
+                <button type="submit">Add to Schedule</button>
+            </form>
+            
+            <h3>Current Schedule</h3>
+            <div id="scheduleList"></div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
