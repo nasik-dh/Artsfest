@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - MALABART 2024-25</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .admin-header h1 {
+            color: #1e3c72;
+            font-size: 2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+            color: white;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+
+        .sidebar {
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .main-content {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .section-title {
+            color: #1e3c72;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f5f7fa;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: #1e3c72;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #eb3349;
+            transform: rotate(90deg);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .google-sheet-config {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .google-sheet-config h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="admin-root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Configuration - Replace with your actual Google Apps Script Web App URL
+        const GOOGLE_APPS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+        const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTQueyDr_RerDpK9evwHFOV7lp2SiI8ls_gtPBakTkEuukrdkZWUrEiMVdBD6ItxQ/pub?output=csv';
+
+        const AdminPanel = () => {
+            const [activeSection, setActiveSection] = useState('dashboard');
+            const [data, setData] = useState({ stage: [], nonStage: [], group: [] });
+            const [loading, setLoading] = useState(false);
+            const [alert, setAlert] = useState(null);
+            const [modalOpen, setModalOpen] = useState(false);
+            const [editingItem, setEditingItem] = useState(null);
+            const [formData, setFormData] = useState({
+                type: 'stage',
+                slNo: '',
+                item: '',
+                participants: [{ adNo: '', name: '' }]
+            });
+
+            useEffect(() => {
+                fetchData();
+            }, []);
+
+            const fetchData = async () => {
+                setLoading(true);
+                try {
+                    const response = await fetch(GOOGLE_SHEET_CSV_URL);
+                    const csvText = await response.text();
+                    const parsed = parseCSVData(csvText);
+                    setData(parsed);
+                    showAlert('Data loaded successfully!', 'success');
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    showAlert('Error loading data: ' + error.message, 'error');
+                }
+                setLoading(false);
+            };
+
+            const parseCSVData = (csv) => {
+                const lines = csv.split('\n');
+                const events = { stage: [], nonStage: [], group: [] };
+                let currentSection = null;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const cells = line.split(',');
+
+                    if (cells[2] && cells[2].includes('STAGE')) {
+                        currentSection = cells[2].includes('NON') ? 'nonStage' : 'stage';
+                        continue;
+                    }
+
+                    if (cells[10] && cells[10].includes('GROUP')) {
+                        currentSection = 'group';
+                        continue;
+                    }
+
+                    if (currentSection === 'stage' || currentSection === 'nonStage') {
+                        const slNo = cells[1]?.trim();
+                        const itemName = cells[2]?.trim();
+                        const adNo1 = cells[3]?.trim();
+                        const name1 = cells[4]?.trim();
+                        const adNo2 = cells[7]?.trim();
+                        const name2 = cells[8]?.trim();
+
+                        if (slNo && itemName && (adNo1 || adNo2)) {
+                            const participants = [];
+                            if (adNo1 && name1) participants.push({ adNo: adNo1, name: name1 });
+                            if (adNo2 && name2) participants.push({ adNo: adNo2, name: name2 });
+
+                            const existingItem = events[currentSection].find(e => e.item === itemName);
+                            if (existingItem) {
+                                existingItem.participants.push(...participants);
+                            } else {
+                                events[currentSection].push({
+                                    slNo,
+                                    item: itemName,
+                                    participants,
+                                    type: currentSection
+                                });
+                            }
+                        }
+                    }
+
+                    if (currentSection === 'group') {
+                        const slNo = cells[11]?.trim();
+                        const itemName = cells[12]?.trim();
+                        const adNo = cells[13]?.trim();
+                        const name = cells[14]?.trim();
+
+                        if (slNo && itemName && adNo && name) {
+                            const existingGroup = events.group.find(e => e.item === itemName);
+                            if (existingGroup) {
+                                existingGroup.participants.push({ adNo, name });
+                            } else {
+                                events.group.push({
+                                    slNo,
+                                    item: itemName,
+                                    participants: [{ adNo, name }],
+                                    type: 'group'
+                                });
+                            }
+                        }
+                    }
+                }
+
+                return events;
+            };
+
+            const showAlert = (message, type) => {
+                setAlert({ message, type });
+                setTimeout(() => setAlert(null), 5000);
+            };
+
+            const openAddModal = () => {
+                setEditingItem(null);
+                setFormData({
+                    type: 'stage',
+                    slNo: '',
+                    item: '',
+                    participants: [{ adNo: '', name: '' }]
+                });
+                setModalOpen(true);
+            };
+
+            const openEditModal = (item) => {
+                setEditingItem(item);
+                setFormData({
+                    type: item.type,
+                    slNo: item.slNo,
+                    item: item.item,
+                    participants: [...item.participants]
+                });
+                setModalOpen(true);
+            };
+
+            const handleFormChange = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const handleParticipantChange = (index, field, value) => {
+                const newParticipants = [...formData.participants];
+                newParticipants[index][field] = value;
+                setFormData(prev => ({ ...prev, participants: newParticipants }));
+            };
+
+            const addParticipant = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    participants: [...prev.participants, { adNo: '', name: '' }]
+                }));
+            };
+
+            const removeParticipant = (index) => {
+                const newParticipants = formData.participants.filter((_, i) => i !== index);
+                setFormData(prev => ({ ...prev, participants: newParticipants }));
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+
+                try {
+                    // This would send to Google Apps Script
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: editingItem ? 'update' : 'add',
+                            data: formData
+                        })
+                    });
+
+                    showAlert(`Event ${editingItem ? 'updated' : 'added'} successfully!`, 'success');
+                    setModalOpen(false);
+                    fetchData();
+                } catch (error) {
+                    showAlert('Error saving data: ' + error.message, 'error');
+                }
+
+                setLoading(false);
+            };
+
+            const handleDelete = async (item) => {
+                if (!confirm(`Are you sure you want to delete "${item.item}"?`)) return;
+
+                setLoading(true);
+                try {
+                    await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'delete',
+                            data: item
+                        })
+                    });
+
+                    showAlert('Event deleted successfully!', 'success');
+                    fetchData();
+                } catch (error) {
+                    showAlert('Error deleting data: ' + error.message, 'error');
+                }
+                setLoading(false);
+            };
+
+            const stats = {
+                total: data.stage.length + data.nonStage.length + data.group.length,
+                stage: data.stage.length,
+                nonStage: data.nonStage.length,
+                group: data.group.length,
+                participants: (() => {
+                    const unique = new Set();
+                    [...data.stage, ...data.nonStage, ...data.group].forEach(e => 
+                        e.participants.forEach(p => unique.add(p.adNo))
+                    );
+                    return unique.size;
+                })()
+            };
+
+            return (
+                <div className="admin-container">
+                    <div className={`loading-overlay ${loading ? 'active' : ''}`}>
+                        <div className="spinner"></div>
+                    </div>
+
+                    <header className="admin-header">
+                        <div>
+                            <h1>🎭 Admin Panel</h1>
+                            <p style={{color: '#666', marginTop: '5px'}}>MALABART 2024-25 Management</p>
+                        </div>
+                        <div className="header-actions">
+                            <button className="btn btn-primary" onClick={openAddModal}>
+                                ➕ Add Event
+                            </button>
+                            <button className="btn btn-success" onClick={fetchData}>
+                                🔄 Refresh
+                            </button>
+                            <button className="btn btn-warning" onClick={() => window.open('index.html', '_blank')}>
+                                👁️ View Site
+                            </button>
+                        </div>
+                    </header>
+
+                    {alert && (
+                        <div className={`alert alert-${alert.type}`}>
+                            {alert.message}
+                        </div>
+                    )}
+
+                    <div className="content-wrapper">
+                        <aside className="sidebar">
+                            <h3>Navigation</h3>
+                            <div 
+                                className={`nav-item ${activeSection === 'dashboard' ? 'active' : ''}`}
+                                onClick={() => setActiveSection('dashboard')}
+                            >
+                                📊 Dashboard
+                            </div>
+                            <div 
+                                className={`nav-item ${activeSection === 'stage' ? 'active' : ''}`}
+                                onClick={() => setActiveSection('stage')}
+                            >
+                                🎤 Stage Items
+                            </div>
+                            <div 
+                                className={`nav-item ${activeSection === 'nonstage' ? 'active' : ''}`}
+                                onClick={() => setActiveSection('nonstage')}
+                            >
+                                📝 Non-Stage Items
+                            </div>
+                            <div 
+                                className={`nav-item ${activeSection === 'group' ? 'active' : ''}`}
+                                onClick={() => setActiveSection('group')}
+                            >
+                                👥 Group Events
+                            </div>
+                            <div 
+                                className={`nav-item ${activeSection === 'settings' ? 'active' : ''}`}
+                                onClick={() => setActiveSection('settings')}
+                            >
+                                ⚙️ Settings
+                            </div>
+                        </aside>
+
+                        <main className="main-content">
+                            {activeSection === 'dashboard' && (
+                                <>
+                                    <h2 className="section-title">Dashboard Overview</h2>
+                                    <div className="stats-grid">
+                                        <div className="stat-card">
+                                            <h3>{stats.total}</h3>
+                                            <p>Total Events</p>
+                                        </div>
+                                        <div className="stat-card">
+                                            <h3>{stats.stage}</h3>
+                                            <p>Stage Items</p>
+                                        </div>
+                                        <div className="stat-card">
+                                            <h3>{stats.nonStage}</h3>
+                                            <p>Non-Stage Items</p>
+                                        </div>
+                                        <div className="stat-card">
+                                            <h3>{stats.group}</h3>
+                                            <p>Group Events</p>
+                                        </div>
+                                        <div className="stat-card">
+                                            <h3>{stats.participants}</h3>
+                                            <p>Total Participants</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="alert alert-info">
+                                        <strong>Quick Actions:</strong> Use the sidebar to navigate between sections, or click "Add Event" to create new entries.
+                                    </div>
+                                </>
+                            )}
+
+                            {(activeSection === 'stage' || activeSection === 'nonstage' || activeSection === 'group') && (
+                                <>
+                                    <h2 className="section-title">
+                                        {activeSection === 'stage' ? '🎤 Stage Items' : 
+                                         activeSection === 'nonstage' ? '📝 Non-Stage Items' : 
+                                         '👥 Group Events'}
+                                    </h2>
+                                    <table className="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Sl.No</th>
+                                                <th>Event Name</th>
+                                                <th>Participants</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {data[activeSection === 'nonstage' ? 'nonStage' : activeSection].map((item, index) => (
+                                                <tr key={index}>
+                                                    <td>{item.slNo}</td>
+                                                    <td><strong>{item.item}</strong></td>
+                                                    <td>
+                                                        {item.participants.map((p, i) => (
+                                                            <div key={i}>
+                                                                {p.name} (#{p.adNo})
+                                                            </div>
+                                                        ))}
+                                                    </td>
+                                                    <td>
+                                                        <div className="action-buttons">
+                                                            <button 
+                                                                className="btn btn-primary btn-small"
+                                                                onClick={() => openEditModal(item)}
+                                                            >
+                                                                ✏️ Edit
+                                                            </button>
+                                                            <button 
+                                                                className="btn btn-danger btn-small"
+                                                                onClick={() => handleDelete(item)}
+                                                            >
+                                                                🗑️ Delete
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </>
+                            )}
+
+                            {activeSection === 'settings' && (
+                                <>
+                                    <h2 className="section-title">⚙️ Settings</h2>
+                                    <div className="google-sheet-config">
+                                        <h3>Google Sheet Configuration</h3>
+                                        <div className="form-group">
+                                            <label>CSV URL:</label>
+                                            <input 
+                                                type="text" 
+                                                className="config-input"
+                                                value={GOOGLE_SHEET_CSV_URL}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Apps Script URL:</label>
+                                            <input 
+                                                type="text" 
+                                                className="config-input"
+                                                placeholder="Paste your Google Apps Script Web App URL here"
+                                            />
+                                        </div>
+                                        <button className="btn btn-success">💾 Save Configuration</button>
+                                    </div>
+
+                                    <div className="alert alert-info">
+                                        <strong>Setup Instructions:</strong>
+                                        <ol style={{marginTop: '10px', marginLeft: '20px'}}>
+                                            <li>Deploy the Google Apps Script (code.gs) as a Web App</li>
+                                            <li>Copy the Web App URL and paste it above</li>
+                                            <li>Make sure the script has access to your spreadsheet</li>
+                                            <li>Test the connection by adding/editing events</li>
+                                        </ol>
+                                    </div>
+                                </>
+                            )}
+                        </main>
+                    </div>
+
+                    {/* Modal */}
+                    <div className={`modal ${modalOpen ? 'active' : ''}`}>
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h2>{editingItem ? 'Edit Event' : 'Add New Event'}</h2>
+                                <button className="close-btn" onClick={() => setModalOpen(false)}>×</button>
+                            </div>
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label>Event Type *</label>
+                                        <select 
+                                            className="form-control"
+                                            value={formData.type}
+                                            onChange={(e) => handleFormChange('type', e.target.value)}
+                                            required
+                                        >
+                                            <option value="stage">Stage</option>
+                                            <option value="nonStage">Non-Stage</option>
+                                            <option value="group">Group</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Serial Number *</label>
+                                        <input 
+                                            type="text"
+                                            className="form-control"
+                                            value={formData.slNo}
+                                            onChange={(e) => handleFormChange('slNo', e.target.value)}
+                                            placeholder="e.g., 1, 2, 3..."
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Event Name *</label>
+                                    <input 
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.item}
+                                        onChange={(e) => handleFormChange('item', e.target.value)}
+                                        placeholder="e.g., QIRATH, GROUP SONG..."
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Participants *</label>
+                                    {formData.participants.map((participant, index) => (
+                                        <div key={index} className="form-row" style={{marginBottom: '10px'}}>
+                                            <div className="form-group" style={{marginBottom: '0'}}>
+                                                <input 
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={participant.adNo}
+                                                    onChange={(e) => handleParticipantChange(index, 'adNo', e.target.value)}
+                                                    placeholder="Admission No."
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group" style={{marginBottom: '0'}}>
+                                                <input 
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={participant.name}
+                                                    onChange={(e) => handleParticipantChange(index, 'name', e.target.value)}
+                                                    placeholder="Name"
+                                                    required
+                                                />
+                                            </div>
+                                            {formData.participants.length > 1 && (
+                                                <button 
+                                                    type="button"
+                                                    className="btn btn-danger btn-small"
+                                                    onClick={() => removeParticipant(index)}
+                                                >
+                                                    ✕
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                    <button 
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={addParticipant}
+                                        style={{marginTop: '10px'}}
+                                    >
+                                        ➕ Add Participant
+                                    </button>
+                                </div>
+
+                                <div className="action-buttons" style={{marginTop: '25px'}}>
+                                    <button type="submit" className="btn btn-success">
+                                        💾 {editingItem ? 'Update' : 'Save'} Event
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={() => setModalOpen(false)}
+                                    >
+                                        ✕ Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<AdminPanel />, document.getElementById('admin-root'));
+    </script>
+</body>
+</html>
