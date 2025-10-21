@@ -2,7 +2,7 @@
 // CONFIGURATION
 // ==========================================
 
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAKL7QcbWOcUc8IS1qJ5Wf2lfchd8sFbhZGT-y494saW2OWpA27gsgEYSbN4uvZgQy/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7QSfhZ0Oq-Pu4wVUR6FapA5c_OKbYYlxEVF8mnJqMgKfWOmOGEi0yRWuc1v7O94lU/exec';
 
 const SHEET_NAMES = {
     arakkal: 'ARAKKAL',
@@ -75,15 +75,17 @@ async function loadSheetData(sheetName) {
     showLoading(sheetName);
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=read&sheet=${SHEET_NAMES[sheetName]}`);
-        const data = await response.json();
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
+        const result = await response.json();
         
-        if (data.success) {
-            sheetData[sheetName] = data.data;
-            renderTable(sheetName, data.data);
+        if (result.success) {
+            const allData = result.data;
+            const sheetKey = SHEET_NAMES[sheetName];
+            sheetData[sheetName] = allData[sheetKey] || [];
+            renderTable(sheetName, sheetData[sheetName]);
             showAlert('Data loaded successfully!', 'success');
         } else {
-            throw new Error(data.message || 'Failed to load data');
+            throw new Error(result.message || 'Failed to load data');
         }
     } catch (error) {
         console.error('Error loading data:', error);
@@ -109,23 +111,29 @@ function hideLoading(sheetName) {
 
 function renderTable(sheetName, data) {
     const tbody = document.querySelector(`#table-${sheetName} tbody`);
-    if (!tbody || !data || data.length === 0) return;
+    if (!tbody) return;
     
     let html = '';
     
-    // Skip header row
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available</td></tr>';
+        return;
+    }
+    
+    // Skip header row for display, but keep it in sheetData
     for (let i = 1; i < data.length; i++) {
         const row = data[i];
+        if (row.every(cell => cell === '')) continue; // Skip empty rows
+        
         html += '<tr>';
         
-        // Render cells based on sheet type
         if (sheetName === 'arakkal' || sheetName === 'marakkar' || sheetName === 'makhdoom') {
             html += `
                 <td class="editable-cell" data-row="${i}" data-col="0">${row[0] || ''}</td>
                 <td class="editable-cell" data-row="${i}" data-col="1">${row[1] || ''}</td>
-                <td class="editable-cell" data-row="${i}" data-col="2">${row[2] || ''}</td>
-                <td class="editable-cell" data-row="${i}" data-col="3">${row[3] || ''}</td>
-                <td class="editable-cell" data-row="${i}" data-col="4">${row[4] || ''}</td>
+                <td class="editable-cell" data-row="${i}" data-col="2">${row[2] || 0}</td>
+                <td class="editable-cell" data-row="${i}" data-col="3">${row[3] || 0}</td>
+                <td class="editable-cell" data-row="${i}" data-col="4">${row[4] || 0}</td>
                 <td>
                     <button class="btn btn-danger" onclick="deleteRow('${sheetName}', ${i})">
                         <i class="fas fa-trash"></i> Delete
@@ -145,7 +153,7 @@ function renderTable(sheetName, data) {
             `;
         } else if (sheetName === 'schedule') {
             html += `
-                <td class="editable-cell" data-row="${i}" data-col="0">${row[0] || ''}</td>
+                <td class="editable-cell" data-row="${i}" data-col="0">${formatDate(row[0])}</td>
                 <td class="editable-cell" data-row="${i}" data-col="1">${row[1] || ''}</td>
                 <td class="editable-cell" data-row="${i}" data-col="2">${row[2] || ''}</td>
                 <td>
@@ -155,9 +163,9 @@ function renderTable(sheetName, data) {
                 </td>
             `;
         } else if (sheetName === 'results' || sheetName === 'teambase') {
-            row.forEach((cell, colIndex) => {
-                html += `<td class="editable-cell" data-row="${i}" data-col="${colIndex}">${cell || ''}</td>`;
-            });
+            for (let j = 0; j < row.length; j++) {
+                html += `<td class="editable-cell" data-row="${i}" data-col="${j}">${row[j] || ''}</td>`;
+            }
         }
         
         html += '</tr>';
@@ -166,33 +174,51 @@ function renderTable(sheetName, data) {
     tbody.innerHTML = html;
     
     // Add click handlers for editable cells
-    document.querySelectorAll('.editable-cell').forEach(cell => {
-        cell.addEventListener('click', makeEditable);
-    });
+    setTimeout(() => {
+        document.querySelectorAll('.editable-cell').forEach(cell => {
+            cell.addEventListener('click', makeEditable);
+        });
+    }, 100);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    } catch {
+        return dateString;
+    }
 }
 
 function makeEditable(e) {
     const cell = e.target;
-    if (cell.querySelector('input')) return; // Already editing
+    if (cell.querySelector('input')) return;
     
     const currentValue = cell.textContent;
-    const row = cell.dataset.row;
-    const col = cell.dataset.col;
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
     
-    cell.innerHTML = `<input type="text" class="cell-input" value="${currentValue}" />`;
-    const input = cell.querySelector('input');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.value = currentValue;
+    
+    cell.innerHTML = '';
+    cell.appendChild(input);
     input.focus();
     input.select();
     
-    input.addEventListener('blur', function() {
-        const newValue = this.value;
+    function saveValue() {
+        const newValue = input.value;
         cell.textContent = newValue;
         updateCellData(currentSheet, row, col, newValue);
-    });
+    }
     
+    input.addEventListener('blur', saveValue);
     input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            this.blur();
+            saveValue();
         }
     });
 }
@@ -216,23 +242,11 @@ async function saveSheetData(sheetName) {
     showLoading(sheetName);
     
     try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'update',
-                sheet: SHEET_NAMES[sheetName],
-                data: sheetData[sheetName]
-            })
-        });
-        
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=updateSheet&sheet=${SHEET_NAMES[sheetName]}&data=${encodeURIComponent(JSON.stringify(sheetData[sheetName]))}`);
         const result = await response.json();
         
         if (result.success) {
             showAlert('Data saved successfully!', 'success');
-            loadSheetData(sheetName); // Reload to confirm
         } else {
             throw new Error(result.message || 'Failed to save data');
         }
@@ -332,43 +346,32 @@ async function handleFormSubmit(e) {
     e.preventDefault();
     
     const formData = new FormData(e.target);
-    const newRow = [];
+    let newRow = [];
     
     if (currentSheet === 'arakkal' || currentSheet === 'marakkar' || currentSheet === 'makhdoom') {
-        newRow.push(
+        newRow = [
             formData.get('adNo'),
             formData.get('name'),
             formData.get('stage'),
             formData.get('nonStage'),
             formData.get('total')
-        );
+        ];
     } else if (currentSheet === 'candidates') {
-        newRow.push(
+        newRow = [
             formData.get('adNo'),
             formData.get('name'),
             formData.get('team')
-        );
+        ];
     } else if (currentSheet === 'schedule') {
-        newRow.push(
+        newRow = [
             formData.get('date'),
             formData.get('time'),
             formData.get('event')
-        );
+        ];
     }
     
     try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'append',
-                sheet: SHEET_NAMES[currentSheet],
-                data: newRow
-            })
-        });
-        
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=appendRow&sheet=${SHEET_NAMES[currentSheet]}&data=${encodeURIComponent(JSON.stringify(newRow))}`);
         const result = await response.json();
         
         if (result.success) {
@@ -396,18 +399,7 @@ async function deleteRow(sheetName, rowIndex) {
     showLoading(sheetName);
     
     try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'delete',
-                sheet: SHEET_NAMES[sheetName],
-                row: rowIndex
-            })
-        });
-        
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=deleteRow&sheet=${SHEET_NAMES[sheetName]}&row=${rowIndex}`);
         const result = await response.json();
         
         if (result.success) {
