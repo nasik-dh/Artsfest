@@ -1,99 +1,437 @@
 // ==========================================
-// DATA STORAGE
+// GOOGLE SHEETS DATA FETCHING
 // ==========================================
 
-const teamsData = {
-    arakkal: {
-        name: 'ARAKKAL',
-        members: [
-            { adNo: 988, name: 'MOHAMMED HADI V', stageCount: 4, nonStageCount: 3, total: 7 },
-            { adNo: 993, name: 'AQIB MUHAMMED KT', stageCount: 3, nonStageCount: 2, total: 5 },
-            { adNo: 997, name: 'MUHAMMED QASIM MP', stageCount: 2, nonStageCount: 3, total: 5 },
-            { adNo: 1000, name: 'ALI RAFI EP', stageCount: 2, nonStageCount: 4, total: 6 },
-            { adNo: 1002, name: 'HAMDAN CC', stageCount: 4, nonStageCount: 2, total: 6 },
-            { adNo: 1008, name: 'HISHAM RAHMATHULLAH O', stageCount: 4, nonStageCount: 8, total: 12 },
-            { adNo: 1009, name: 'SAHL SHAN O', stageCount: 4, nonStageCount: 5, total: 9 },
-            { adNo: 1012, name: 'MUHAMMED HASHIM KH', stageCount: 3, nonStageCount: 8, total: 11 },
-            { adNo: 1014, name: 'MISHAB PT', stageCount: 5, nonStageCount: 3, total: 8 },
-            { adNo: 1019, name: 'MUHAMMED RAMEES VP', stageCount: 2, nonStageCount: 2, total: 4 },
-            { adNo: 1020, name: 'ABDAUL HADI', stageCount: 5, nonStageCount: 2, total: 7 }
-        ]
-    },
-    marakkar: {
-        name: 'MARAKKAR',
-        members: [
-            { adNo: 987, name: 'MUHAMMED LASIN KC', stageCount: 3, nonStageCount: 5, total: 8 },
-            { adNo: 992, name: 'MUHAMMED SHAHAL', stageCount: 4, nonStageCount: 4, total: 8 },
-            { adNo: 995, name: 'MUHAMMED RABEEH PP', stageCount: 2, nonStageCount: 4, total: 6 },
-            { adNo: 996, name: 'MUHAMMED SHAFEEQUE T', stageCount: 3, nonStageCount: 4, total: 7 },
-            { adNo: 998, name: 'MUHAMMED HASHIM V', stageCount: 3, nonStageCount: 2, total: 5 },
-            { adNo: 999, name: 'MUHAMMED RASAL PP', stageCount: 2, nonStageCount: 6, total: 8 },
-            { adNo: 1005, name: 'MUHAMMED ANSHAD VP', stageCount: 3, nonStageCount: 6, total: 9 },
-            { adNo: 1010, name: 'SADHAQATHULLA C', stageCount: 2, nonStageCount: 4, total: 6 },
-            { adNo: 1013, name: 'SAIDALAVI SHAMIL MC', stageCount: 5, nonStageCount: 3, total: 8 },
-            { adNo: 1016, name: 'MUHAMMED ASLAM', stageCount: 5, nonStageCount: 0, total: 5 },
-            { adNo: 1017, name: 'MUHAMMED MUSTHAFA SM', stageCount: 6, nonStageCount: 4, total: 10 }
-        ]
-    },
-    makhdoom: {
-        name: 'MAKHDOOM',
-        members: [
-            { adNo: 986, name: 'MUHAMMED YASEEN K', stageCount: 2, nonStageCount: 6, total: 8 },
-            { adNo: 989, name: 'MUHAMMED HAYYAN VP', stageCount: 3, nonStageCount: 2, total: 5 },
-            { adNo: 990, name: 'MOHAMMED AFRAH N', stageCount: 3, nonStageCount: 3, total: 6 },
-            { adNo: 991, name: 'MUHAMMED ZIYAD C', stageCount: 2, nonStageCount: 7, total: 9 },
-            { adNo: 1001, name: 'MUHAMMED SINAN CK', stageCount: 6, nonStageCount: 2, total: 8 },
-            { adNo: 1003, name: 'MUHAMMED ALI M', stageCount: 4, nonStageCount: 5, total: 9 },
-            { adNo: 1004, name: 'MUHAMMED SHAFAN A', stageCount: 5, nonStageCount: 1, total: 6 },
-            { adNo: 1006, name: 'MUHAMMED NASWIH IK', stageCount: 1, nonStageCount: 6, total: 7 },
-            { adNo: 1011, name: 'MUHAMMED SAHL', stageCount: 6, nonStageCount: 3, total: 9 },
-            { adNo: 1015, name: 'MUHAMMED RASIN KP', stageCount: 4, nonStageCount: 5, total: 9 },
-            { adNo: 1018, name: 'MUHAMMED SHAFIN', stageCount: 2, nonStageCount: 2, total: 4 }
-        ]
-    }
+const SHEET_URLS = {
+    arakkal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=436920225&single=true&output=csv',
+    marakkar: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1491954663&single=true&output=csv',
+    makhdoom: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=943975063&single=true&output=csv',
+    positionGrade: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1379136267&single=true&output=csv',
+    schedule: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=754287169&single=true&output=csv',
+    tArakkal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=2123172704&single=true&output=csv',
+    tMarakkar: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=491533326&single=true&output=csv',
+    tMakhdoom: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1326814678&single=true&output=csv',
+    teamBase: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1283347559&single=true&output=csv',
+    totalCandidates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1883498839&single=true&output=csv',
+    result: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1562650117&single=true&output=csv'
 };
 
-const allCandidates = [
-    { adNo: 986, name: 'MUHAMMED YASEEN K', team: 'MAKHDOOM' },
-    { adNo: 987, name: 'MUHAMMED LASIN KC', team: 'MARAKKAR' },
-    { adNo: 988, name: 'MOHAMMED HADI V', team: 'ARAKKAL' },
-    { adNo: 989, name: 'MUHAMMED HAYYAN VP', team: 'MAKHDOOM' },
-    { adNo: 990, name: 'MOHAMMED AFRAH N', team: 'MAKHDOOM' },
-    { adNo: 991, name: 'MUHAMMED ZIYAD C', team: 'MAKHDOOM' },
-    { adNo: 992, name: 'MUHAMMED SHAHAL', team: 'MARAKKAR' },
-    { adNo: 993, name: 'AQIB MUHAMMED KT', team: 'ARAKKAL' },
-    { adNo: 995, name: 'MUHAMMED RABEEH PP', team: 'MARAKKAR' },
-    { adNo: 996, name: 'MUHAMMED SHAFEEQUE T', team: 'MARAKKAR' },
-    { adNo: 997, name: 'MUHAMMED QASIM MP', team: 'ARAKKAL' },
-    { adNo: 998, name: 'MUHAMMED HASHIM V', team: 'MARAKKAR' },
-    { adNo: 999, name: 'MUHAMMED RASAL PP', team: 'MARAKKAR' },
-    { adNo: 1000, name: 'ALI RAFI EP', team: 'ARAKKAL' },
-    { adNo: 1001, name: 'MUHAMMED SINAN CK', team: 'MAKHDOOM' },
-    { adNo: 1002, name: 'HAMDAN CC', team: 'ARAKKAL' },
-    { adNo: 1003, name: 'MUHAMMED ALI M', team: 'MAKHDOOM' },
-    { adNo: 1004, name: 'MUHAMMED SHAFAN A', team: 'MAKHDOOM' },
-    { adNo: 1005, name: 'MUHAMMED ANSHAD VP', team: 'MARAKKAR' },
-    { adNo: 1006, name: 'MUHAMMED NASWIH IK', team: 'MAKHDOOM' },
-    { adNo: 1008, name: 'HISHAM RAHMATHULLAH O', team: 'ARAKKAL' },
-    { adNo: 1009, name: 'SAHL SHAN O', team: 'ARAKKAL' },
-    { adNo: 1010, name: 'SADHAQATHULLA C', team: 'MARAKKAR' },
-    { adNo: 1011, name: 'MUHAMMED SAHL', team: 'MAKHDOOM' },
-    { adNo: 1012, name: 'MUHAMMED HASHIM KH', team: 'ARAKKAL' },
-    { adNo: 1013, name: 'SAIDALAVI SHAMIL MC', team: 'MARAKKAR' },
-    { adNo: 1014, name: 'MISHAB PT', team: 'ARAKKAL' },
-    { adNo: 1015, name: 'MUHAMMED RASIN KP', team: 'MAKHDOOM' },
-    { adNo: 1016, name: 'MUHAMMED ASLAM', team: 'MARAKKAR' },
-    { adNo: 1017, name: 'MUHAMMED MUSTHAFA SM', team: 'MARAKKAR' },
-    { adNo: 1018, name: 'MUHAMMED SHAFIN', team: 'MAKHDOOM' },
-    { adNo: 1019, name: 'MUHAMMED RAMEES VP', team: 'ARAKKAL' },
-    { adNo: 1020, name: 'ABDAUL HADI', team: 'ARAKKAL' }
-];
+let teamsData = {};
+let allCandidates = [];
+let scheduleData = [];
+let resultsData = {};
+let teamBaseData = {};
+
+// CSV Parser
+function parseCSV(csv) {
+    const lines = csv.split('\n');
+    const result = [];
+    const headers = lines[0].split(',').map(h => h.trim());
+    
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        
+        const obj = {};
+        const currentLine = lines[i].split(',');
+        
+        for (let j = 0; j < headers.length; j++) {
+            obj[headers[j]] = currentLine[j] ? currentLine[j].trim() : '';
+        }
+        result.push(obj);
+    }
+    return result;
+}
+
+// Fetch CSV data
+async function fetchCSV(url) {
+    try {
+        const response = await fetch(url);
+        const csv = await response.text();
+        return parseCSV(csv);
+    } catch (error) {
+        console.error('Error fetching CSV:', error);
+        return [];
+    }
+}
+
+// Load all data from Google Sheets
+async function loadAllData() {
+    try {
+        // Show loading indicator
+        showLoading();
+        
+        // Fetch all data in parallel
+        const [
+            arakkData,
+            marakkarData,
+            makhdoomData,
+            candidatesData,
+            schedData,
+            teamBase,
+            resultData
+        ] = await Promise.all([
+            fetchCSV(SHEET_URLS.arakkal),
+            fetchCSV(SHEET_URLS.marakkar),
+            fetchCSV(SHEET_URLS.makhdoom),
+            fetchCSV(SHEET_URLS.totalCandidates),
+            fetchCSV(SHEET_URLS.schedule),
+            fetchCSV(SHEET_URLS.teamBase),
+            fetchCSV(SHEET_URLS.result)
+        ]);
+        
+        // Process teams data
+        teamsData = {
+            arakkal: {
+                name: 'ARAKKAL',
+                members: processTeamMembers(arakkData)
+            },
+            marakkar: {
+                name: 'MARAKKAR',
+                members: processTeamMembers(marakkarData)
+            },
+            makhdoom: {
+                name: 'MAKHDOOM',
+                members: processTeamMembers(makhdoomData)
+            }
+        };
+        
+        // Process candidates
+        allCandidates = candidatesData.map(row => ({
+            adNo: parseInt(row['AD NO'] || row['adNo'] || 0),
+            name: row['NAME'] || row['name'] || '',
+            team: row['TEAM'] || row['team'] || ''
+        }));
+        
+        // Process schedule
+        scheduleData = schedData;
+        
+        // Process team base
+        teamBaseData = processTeamBase(teamBase);
+        
+        // Process results
+        resultsData = processResults(resultData);
+        
+        // Update UI
+        updateAllSections();
+        
+        hideLoading();
+    } catch (error) {
+        console.error('Error loading data:', error);
+        hideLoading();
+        alert('Error loading data. Please refresh the page.');
+    }
+}
+
+function processTeamMembers(data) {
+    return data.map(row => ({
+        adNo: parseInt(row['AD NO'] || row['adNo'] || 0),
+        name: row['NAME'] || row['name'] || '',
+        stageCount: parseInt(row['STAGE'] || row['stage'] || row['stageCount'] || 0),
+        nonStageCount: parseInt(row['NON-STAGE'] || row['nonStage'] || row['nonStageCount'] || 0),
+        total: parseInt(row['TOTAL'] || row['total'] || 0)
+    }));
+}
+
+function processTeamBase(data) {
+    const result = {};
+    data.forEach(row => {
+        const team = (row['TEAM'] || row['team'] || '').toLowerCase();
+        if (team) {
+            result[team] = {
+                stagePoints: parseInt(row['STAGE'] || row['stage'] || 0),
+                nonStagePoints: parseInt(row['NON-STAGE'] || row['nonStage'] || 0),
+                groupGeneral: parseInt(row['GROUP & GENERAL'] || row['groupGeneral'] || 0),
+                totalPoints: parseInt(row['TOTAL'] || row['total'] || 0),
+                percentage: parseFloat(row['PERCENTAGE'] || row['percentage'] || 0)
+            };
+        }
+    });
+    return result;
+}
+
+function processResults(data) {
+    return data.map(row => ({
+        rank: parseInt(row['RANK'] || row['rank'] || 0),
+        team: row['TEAM'] || row['team'] || '',
+        stagePoints: parseInt(row['STAGE'] || row['stage'] || 0),
+        nonStagePoints: parseInt(row['NON-STAGE'] || row['nonStage'] || 0),
+        groupGeneral: parseInt(row['GROUP & GENERAL'] || row['groupGeneral'] || 0),
+        totalPoints: parseInt(row['TOTAL'] || row['total'] || 0),
+        percentage: parseFloat(row['PERCENTAGE'] || row['percentage'] || 0)
+    }));
+}
+
+function showLoading() {
+    const loader = document.createElement('div');
+    loader.id = 'loadingOverlay';
+    loader.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); display: flex; align-items: center; 
+                    justify-content: center; z-index: 9999;">
+            <div style="text-align: center; color: white;">
+                <div style="border: 8px solid #f3f3f3; border-top: 8px solid #2563eb; 
+                            border-radius: 50%; width: 60px; height: 60px; 
+                            animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                <p style="font-size: 1.2rem;">Loading data...</p>
+            </div>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    document.body.appendChild(loader);
+}
+
+function hideLoading() {
+    const loader = document.getElementById('loadingOverlay');
+    if (loader) loader.remove();
+}
+
+function updateAllSections() {
+    updateTeamCards();
+    updateTeamRankings();
+    updateCandidates();
+    updateSchedule();
+    updateResults();
+    updateChart();
+}
+
+function updateTeamCards() {
+    const teams = ['arakkal', 'marakkar', 'makhdoom'];
+    teams.forEach(team => {
+        const card = document.querySelector(`.team-card[data-team="${team}"]`);
+        if (card && teamBaseData[team]) {
+            const data = teamBaseData[team];
+            const stats = card.querySelectorAll('.stat-value');
+            if (stats[0]) stats[0].textContent = teamsData[team].members.length;
+            if (stats[1]) stats[1].textContent = data.totalPoints;
+            if (stats[2]) stats[2].textContent = data.percentage.toFixed(2) + '%';
+        }
+    });
+}
+
+function updateTeamRankings() {
+    const sortedTeams = Object.entries(teamBaseData)
+        .map(([key, data]) => ({
+            team: key.toUpperCase(),
+            ...data
+        }))
+        .sort((a, b) => b.totalPoints - a.totalPoints);
+    
+    const podiumItems = document.querySelectorAll('.podium-item');
+    if (podiumItems.length >= 3 && sortedTeams.length >= 3) {
+        // First place (middle)
+        const first = podiumItems[1];
+        first.querySelector('h4').textContent = sortedTeams[0].team;
+        first.querySelector('.podium-score').textContent = sortedTeams[0].totalPoints + ' Points';
+        first.querySelector('.podium-percentage').textContent = sortedTeams[0].percentage.toFixed(2) + '%';
+        
+        // Second place (left)
+        const second = podiumItems[0];
+        second.querySelector('h4').textContent = sortedTeams[1].team;
+        second.querySelector('.podium-score').textContent = sortedTeams[1].totalPoints + ' Points';
+        second.querySelector('.podium-percentage').textContent = sortedTeams[1].percentage.toFixed(2) + '%';
+        
+        // Third place (right)
+        const third = podiumItems[2];
+        third.querySelector('h4').textContent = sortedTeams[2].team;
+        third.querySelector('.podium-score').textContent = sortedTeams[2].totalPoints + ' Points';
+        third.querySelector('.podium-percentage').textContent = sortedTeams[2].percentage.toFixed(2) + '%';
+    }
+}
+
+function updateSchedule() {
+    if (scheduleData.length === 0) return;
+    
+    const scheduleTimeline = document.querySelector('.schedule-timeline');
+    if (!scheduleTimeline) return;
+    
+    // Group events by date
+    const eventsByDate = {};
+    scheduleData.forEach(row => {
+        const date = row['DATE'] || row['date'] || '';
+        const time = row['TIME'] || row['time'] || '';
+        const event = row['EVENT'] || row['event'] || '';
+        
+        if (date && event) {
+            if (!eventsByDate[date]) {
+                eventsByDate[date] = [];
+            }
+            eventsByDate[date].push({ time, event });
+        }
+    });
+    
+    // Generate HTML
+    let html = '';
+    Object.entries(eventsByDate).forEach(([date, events]) => {
+        const dateObj = new Date(date);
+        const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        const dayNum = dateObj.getDate();
+        const month = dateObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+        
+        html += `
+            <div class="schedule-day">
+                <div class="day-header">
+                    <div class="day-date">
+                        <span class="date-num">${dayNum}</span>
+                        <span class="date-month">${month}</span>
+                    </div>
+                    <div class="day-info">
+                        <h3>${dayName}</h3>
+                        <p>${date}</p>
+                    </div>
+                </div>
+                <div class="day-events">
+        `;
+        
+        events.forEach(evt => {
+            html += `
+                <div class="schedule-event">
+                    <span class="event-time">${evt.time}</span>
+                    <span class="event-name">${evt.event}</span>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    });
+    
+    scheduleTimeline.innerHTML = html;
+}
+
+function updateResults() {
+    const tbody = document.querySelector('.results-table tbody');
+    if (!tbody || resultsData.length === 0) return;
+    
+    const sortedResults = resultsData.sort((a, b) => a.rank - b.rank);
+    
+    let html = '';
+    sortedResults.forEach(result => {
+        const rankClass = result.rank === 1 ? 'gold' : result.rank === 2 ? 'silver' : result.rank === 3 ? 'bronze' : '';
+        const rankLabel = result.rank === 1 ? '1st' : result.rank === 2 ? '2nd' : result.rank === 3 ? '3rd' : result.rank + 'th';
+        
+        html += `
+            <tr class="rank-${result.rank}">
+                <td><span class="rank-badge ${rankClass}">${rankLabel}</span></td>
+                <td><strong>${result.team}</strong></td>
+                <td>${result.stagePoints}</td>
+                <td>${result.nonStagePoints}</td>
+                <td>${result.groupGeneral}</td>
+                <td><strong>${result.totalPoints}</strong></td>
+                <td>${result.percentage.toFixed(2)}%</td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = html;
+}
+
+function updateChart() {
+    const ctx = document.getElementById('resultsChart');
+    if (!ctx || resultsData.length === 0) return;
+    
+    const labels = resultsData.map(r => r.team);
+    const stageData = resultsData.map(r => r.stagePoints);
+    const nonStageData = resultsData.map(r => r.nonStagePoints);
+    const groupData = resultsData.map(r => r.groupGeneral);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Stage Points',
+                    data: stageData,
+                    backgroundColor: 'rgba(37, 99, 235, 0.8)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 2
+                },
+                {
+                    label: 'Non-Stage Points',
+                    data: nonStageData,
+                    backgroundColor: 'rgba(124, 58, 237, 0.8)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 2
+                },
+                {
+                    label: 'Group & General',
+                    data: groupData,
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        padding: 20
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Team Performance Comparison',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    },
+                    padding: 20
+                }
+            },
+            scales: {
+                x: {
+                    stacked: false,
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                y: {
+                    stacked: false,
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
 // ==========================================
 // NAVIGATION & SMOOTH SCROLLING
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Load data from Google Sheets
+    loadAllData();
+    
     // Smooth scrolling for navigation links
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -126,10 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Initialize sections
-    initializeCandidates();
-    initializeChart();
-    
     // Close modal when clicking outside
     const modal = document.getElementById('teamModal');
     if (modal) {
@@ -147,6 +481,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Auto refresh data every 5 minutes
+setInterval(() => {
+    loadAllData();
+}, 5 * 60 * 1000);
 
 // ==========================================
 // TEAM DETAILS MODAL
@@ -189,7 +528,6 @@ function showTeamDetails(team) {
     });
     membersHTML += '</div>';
     
-    // Add CSS for modal members
     membersHTML += `
         <style>
             .modal-members-list {
@@ -297,7 +635,6 @@ function showResultsTable(type) {
     tableBtns.forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
     
-    // For now, showing the same table (can be expanded with different data)
     console.log('Showing results for:', type);
 }
 
@@ -305,7 +642,7 @@ function showResultsTable(type) {
 // CANDIDATES FILTERING & DISPLAY
 // ==========================================
 
-function initializeCandidates() {
+function updateCandidates() {
     displayCandidates('all');
 }
 
@@ -319,6 +656,8 @@ function filterCandidates(team) {
 
 function displayCandidates(filterTeam) {
     const candidatesGrid = document.getElementById('candidatesGrid');
+    if (!candidatesGrid) return;
+    
     let filteredCandidates = allCandidates;
     
     if (filterTeam !== 'all') {
@@ -328,7 +667,7 @@ function displayCandidates(filterTeam) {
     let html = '';
     filteredCandidates.forEach(candidate => {
         const teamData = teamsData[candidate.team.toLowerCase()];
-        const memberData = teamData.members.find(m => m.adNo === candidate.adNo);
+        const memberData = teamData ? teamData.members.find(m => m.adNo === candidate.adNo) : null;
         
         const stageCount = memberData ? memberData.stageCount : 0;
         const nonStageCount = memberData ? memberData.nonStageCount : 0;
@@ -366,97 +705,6 @@ function displayCandidates(filterTeam) {
 }
 
 // ==========================================
-// RESULTS CHART
-// ==========================================
-
-function initializeChart() {
-    const ctx = document.getElementById('resultsChart');
-    if (!ctx) return;
-    
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['ARAKKAL', 'MARAKKAR', 'MAKHDOOM'],
-            datasets: [
-                {
-                    label: 'Stage Points',
-                    data: [94, 85, 105],
-                    backgroundColor: 'rgba(37, 99, 235, 0.8)',
-                    borderColor: 'rgba(37, 99, 235, 1)',
-                    borderWidth: 2
-                },
-                {
-                    label: 'Non-Stage Points',
-                    data: [96, 100, 117],
-                    backgroundColor: 'rgba(124, 58, 237, 0.8)',
-                    borderColor: 'rgba(124, 58, 237, 1)',
-                    borderWidth: 2
-                },
-                {
-                    label: 'Group & General',
-                    data: [35, 36, 37],
-                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                    borderColor: 'rgba(245, 158, 11, 1)',
-                    borderWidth: 2
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        padding: 20
-                    }
-                },
-                title: {
-                    display: true,
-                    text: 'Team Performance Comparison',
-                    font: {
-                        size: 18,
-                        weight: 'bold'
-                    },
-                    padding: 20
-                }
-            },
-            scales: {
-                x: {
-                    stacked: false,
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
-                },
-                y: {
-                    stacked: false,
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        font: {
-                            size: 12
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-// ==========================================
 // SCROLL ANIMATIONS
 // ==========================================
 
@@ -474,7 +722,6 @@ const observer = new IntersectionObserver(function(entries) {
     });
 }, observerOptions);
 
-// Observe all sections for fade-in animation
 document.addEventListener('DOMContentLoaded', function() {
     const sections = document.querySelectorAll('section');
     sections.forEach(section => {
