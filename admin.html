@@ -3,113 +3,621 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Arts Festival 2024</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>MALABART Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark-bg: #0f172a;
+            --light-bg: #f1f5f9;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .admin-header p {
+            opacity: 0.9;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: var(--white);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        tbody tr:hover {
+            background: var(--light-bg);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--white);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light-bg);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: var(--text-dark);
+        }
+
+        .close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .close:hover {
+            color: var(--text-dark);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid var(--light-bg);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+
+        .editable-cell {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .editable-cell:hover {
+            background: #f0f9ff;
+        }
+
+        input[type="text"].cell-input,
+        input[type="number"].cell-input {
+            width: 100%;
+            padding: 5px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--danger-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 10px;
+            }
+
+            .admin-header {
+                padding: 20px;
+            }
+
+            .admin-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .tabs-container {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">Arts Festival 2024</div>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="admin.html" class="active">Admin</a></li>
-            </ul>
-        </nav>
-    </header>
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
 
-    <main class="admin-panel">
-        <h1>Admin Panel</h1>
-        
-        <div class="admin-tabs">
-            <button class="tab-button active" onclick="showTab('candidates')">Manage Candidates</button>
-            <button class="tab-button" onclick="showTab('programs')">Manage Programs</button>
-            <button class="tab-button" onclick="showTab('results')">Add Results</button>
-            <button class="tab-button" onclick="showTab('schedule')">Schedule</button>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-tools"></i> MALABART 2024-25 Admin Panel</h1>
+            <p>Manage competition data, teams, candidates, and results</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('arakkal')">ARAKKAL</button>
+            <button class="tab-btn" onclick="switchTab('marakkar')">MARAKKAR</button>
+            <button class="tab-btn" onclick="switchTab('makhdoom')">MAKHDOOM</button>
+            <button class="tab-btn" onclick="switchTab('candidates')">Candidates</button>
+            <button class="tab-btn" onclick="switchTab('schedule')">Schedule</button>
+            <button class="tab-btn" onclick="switchTab('results')">Results</button>
+            <button class="tab-btn" onclick="switchTab('teambase')">Team Base</button>
+        </div>
+
+        <!-- ARAKKAL Tab -->
+        <div id="arakkal" class="tab-content active">
+            <h2 class="section-title">ARAKKAL Team Members</h2>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="openAddModal('arakkal')">
+                    <i class="fas fa-plus"></i> Add New Member
+                </button>
+                <button class="btn btn-primary" onclick="saveSheetData('arakkal')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('arakkal')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-arakkal">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-arakkal">
+                    <thead>
+                        <tr>
+                            <th>AD NO</th>
+                            <th>NAME</th>
+                            <th>STAGE</th>
+                            <th>NON-STAGE</th>
+                            <th>TOTAL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MARAKKAR Tab -->
+        <div id="marakkar" class="tab-content">
+            <h2 class="section-title">MARAKKAR Team Members</h2>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="openAddModal('marakkar')">
+                    <i class="fas fa-plus"></i> Add New Member
+                </button>
+                <button class="btn btn-primary" onclick="saveSheetData('marakkar')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('marakkar')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-marakkar">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-marakkar">
+                    <thead>
+                        <tr>
+                            <th>AD NO</th>
+                            <th>NAME</th>
+                            <th>STAGE</th>
+                            <th>NON-STAGE</th>
+                            <th>TOTAL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MAKHDOOM Tab -->
+        <div id="makhdoom" class="tab-content">
+            <h2 class="section-title">MAKHDOOM Team Members</h2>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="openAddModal('makhdoom')">
+                    <i class="fas fa-plus"></i> Add New Member
+                </button>
+                <button class="btn btn-primary" onclick="saveSheetData('makhdoom')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('makhdoom')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-makhdoom">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-makhdoom">
+                    <thead>
+                        <tr>
+                            <th>AD NO</th>
+                            <th>NAME</th>
+                            <th>STAGE</th>
+                            <th>NON-STAGE</th>
+                            <th>TOTAL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Candidates Tab -->
-        <div id="candidatesTab" class="tab-content active">
-            <h2>Add New Candidate</h2>
-            <form id="candidateForm">
-                <input type="text" id="candidateName" placeholder="Candidate Name" required>
-                <select id="candidateTeam" required>
-                    <option value="">Select Team</option>
-                </select>
-                <input type="url" id="candidateImage" placeholder="Image URL (optional)">
-                <button type="submit">Add Candidate</button>
-            </form>
-            
-            <h3>All Candidates</h3>
-            <div id="candidatesList"></div>
-        </div>
-
-        <!-- Programs Tab -->
-        <div id="programsTab" class="tab-content">
-            <h2>Add New Program</h2>
-            <form id="programForm">
-                <input type="text" id="programName" placeholder="Program Name" required>
-                <select id="programCategory" required>
-                    <option value="">Select Category</option>
-                    <option value="stage">Stage</option>
-                    <option value="non-stage">Non-Stage</option>
-                    <option value="sports">Sports</option>
-                </select>
-                <input type="number" id="minParticipants" placeholder="Min Participants" required>
-                <input type="number" id="maxParticipants" placeholder="Max Participants" required>
-                <input type="text" id="programVenue" placeholder="Venue" required>
-                <button type="submit">Add Program</button>
-            </form>
-            
-            <h3>All Programs</h3>
-            <div id="programsList"></div>
-        </div>
-
-        <!-- Results Tab -->
-        <div id="resultsTab" class="tab-content">
-            <h2>Add Result</h2>
-            <form id="resultForm">
-                <select id="resultCandidate" required>
-                    <option value="">Select Candidate</option>
-                </select>
-                <select id="resultProgram" required>
-                    <option value="">Select Program</option>
-                </select>
-                <select id="resultPosition">
-                    <option value="">Position (optional)</option>
-                    <option value="1">1st</option>
-                    <option value="2">2nd</option>
-                    <option value="3">3rd</option>
-                </select>
-                <select id="resultGrade">
-                    <option value="">Grade (optional)</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                </select>
-                <button type="submit">Add Result</button>
-            </form>
+        <div id="candidates" class="tab-content">
+            <h2 class="section-title">All Candidates</h2>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="openAddModal('candidates')">
+                    <i class="fas fa-plus"></i> Add New Candidate
+                </button>
+                <button class="btn btn-primary" onclick="saveSheetData('candidates')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('candidates')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-candidates">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-candidates">
+                    <thead>
+                        <tr>
+                            <th>AD NO</th>
+                            <th>NAME</th>
+                            <th>TEAM</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Schedule Tab -->
-        <div id="scheduleTab" class="tab-content">
-            <h2>Add Schedule</h2>
-            <form id="scheduleForm">
-                <select id="scheduleProgram" required>
-                    <option value="">Select Program</option>
-                </select>
-                <input type="date" id="scheduleDate" required>
-                <input type="time" id="startTime" required>
-                <input type="time" id="endTime" required>
-                <input type="text" id="scheduleVenue" placeholder="Venue" required>
-                <button type="submit">Add to Schedule</button>
-            </form>
-            
-            <h3>Current Schedule</h3>
-            <div id="scheduleList"></div>
+        <div id="schedule" class="tab-content">
+            <h2 class="section-title">Event Schedule</h2>
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="openAddModal('schedule')">
+                    <i class="fas fa-plus"></i> Add New Event
+                </button>
+                <button class="btn btn-primary" onclick="saveSheetData('schedule')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('schedule')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-schedule">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-schedule">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>TIME</th>
+                            <th>EVENT</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
-    </main>
 
-    <script src="js/config.js"></script>
-    <script src="js/admin.js"></script>
+        <!-- Results Tab -->
+        <div id="results" class="tab-content">
+            <h2 class="section-title">Competition Results</h2>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="saveSheetData('results')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('results')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-results">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-results">
+                    <thead>
+                        <tr>
+                            <th>RANK</th>
+                            <th>TEAM</th>
+                            <th>STAGE</th>
+                            <th>NON-STAGE</th>
+                            <th>GROUP & GENERAL</th>
+                            <th>TOTAL</th>
+                            <th>PERCENTAGE</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team Base Tab -->
+        <div id="teambase" class="tab-content">
+            <h2 class="section-title">Team Base Statistics</h2>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="saveSheetData('teambase')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button class="btn btn-warning" onclick="loadSheetData('teambase')">
+                    <i class="fas fa-sync"></i> Refresh Data
+                </button>
+            </div>
+            <div class="loading" id="loading-teambase">
+                <div class="spinner"></div>
+                <p>Loading data...</p>
+            </div>
+            <div class="table-container">
+                <table id="table-teambase">
+                    <thead>
+                        <tr>
+                            <th>TEAM</th>
+                            <th>STAGE</th>
+                            <th>NON-STAGE</th>
+                            <th>GROUP & GENERAL</th>
+                            <th>TOTAL</th>
+                            <th>PERCENTAGE</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="dataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Entry</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="dataForm">
+                <div id="formFields"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
 </body>
 </html>
