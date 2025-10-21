@@ -2,19 +2,7 @@
 // GOOGLE SHEETS DATA FETCHING
 // ==========================================
 
-const SHEET_URLS = {
-    arakkal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=436920225&single=true&output=csv',
-    marakkar: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1491954663&single=true&output=csv',
-    makhdoom: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=943975063&single=true&output=csv',
-    positionGrade: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1379136267&single=true&output=csv',
-    schedule: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=754287169&single=true&output=csv',
-    tArakkal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=2123172704&single=true&output=csv',
-    tMarakkar: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=491533326&single=true&output=csv',
-    tMakhdoom: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1326814678&single=true&output=csv',
-    teamBase: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1283347559&single=true&output=csv',
-    totalCandidates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1883498839&single=true&output=csv',
-    result: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQrBJCudcS2saOS_KkWLNLMoZ5diRe5Np2R2TbFYQkXArwG53M8rs17gcHP_yQsVIvYJTOmTrhltJe/pub?gid=1562650117&single=true&output=csv'
-};
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7QSfhZ0Oq-Pu4wVUR6FapA5c_OKbYYlxEVF8mnJqMgKfWOmOGEi0yRWuc1v7O94lU/exec';
 
 let teamsData = {};
 let allCandidates = [];
@@ -22,127 +10,100 @@ let scheduleData = [];
 let resultsData = {};
 let teamBaseData = {};
 
-// CSV Parser
-function parseCSV(csv) {
-    const lines = csv.split('\n');
-    const result = [];
-    const headers = lines[0].split(',').map(h => h.trim());
-    
-    for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue;
-        
-        const obj = {};
-        const currentLine = lines[i].split(',');
-        
-        for (let j = 0; j < headers.length; j++) {
-            obj[headers[j]] = currentLine[j] ? currentLine[j].trim() : '';
-        }
-        result.push(obj);
-    }
-    return result;
-}
-
-// Fetch CSV data
-async function fetchCSV(url) {
-    try {
-        const response = await fetch(url);
-        const csv = await response.text();
-        return parseCSV(csv);
-    } catch (error) {
-        console.error('Error fetching CSV:', error);
-        return [];
-    }
-}
-
 // Load all data from Google Sheets
 async function loadAllData() {
     try {
-        // Show loading indicator
         showLoading();
         
-        // Fetch all data in parallel
-        const [
-            arakkData,
-            marakkarData,
-            makhdoomData,
-            candidatesData,
-            schedData,
-            teamBase,
-            resultData
-        ] = await Promise.all([
-            fetchCSV(SHEET_URLS.arakkal),
-            fetchCSV(SHEET_URLS.marakkar),
-            fetchCSV(SHEET_URLS.makhdoom),
-            fetchCSV(SHEET_URLS.totalCandidates),
-            fetchCSV(SHEET_URLS.schedule),
-            fetchCSV(SHEET_URLS.teamBase),
-            fetchCSV(SHEET_URLS.result)
-        ]);
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
+        const result = await response.json();
         
-        // Process teams data
-        teamsData = {
-            arakkal: {
-                name: 'ARAKKAL',
-                members: processTeamMembers(arakkData)
-            },
-            marakkar: {
-                name: 'MARAKKAR',
-                members: processTeamMembers(marakkarData)
-            },
-            makhdoom: {
-                name: 'MAKHDOOM',
-                members: processTeamMembers(makhdoomData)
-            }
-        };
-        
-        // Process candidates
-        allCandidates = candidatesData.map(row => ({
-            adNo: parseInt(row['AD NO'] || row['adNo'] || 0),
-            name: row['NAME'] || row['name'] || '',
-            team: row['TEAM'] || row['team'] || ''
-        }));
-        
-        // Process schedule
-        scheduleData = schedData;
-        
-        // Process team base
-        teamBaseData = processTeamBase(teamBase);
-        
-        // Process results
-        resultsData = processResults(resultData);
-        
-        // Update UI
-        updateAllSections();
-        
-        hideLoading();
+        if (result.success) {
+            const data = result.data;
+            
+            // Process teams data
+            teamsData = {
+                arakkal: {
+                    name: 'ARAKKAL',
+                    members: processTeamMembers(data['ARAKKAL'])
+                },
+                marakkar: {
+                    name: 'MARAKKAR',
+                    members: processTeamMembers(data['MARAKKAR'])
+                },
+                makhdoom: {
+                    name: 'MAKHDOOM',
+                    members: processTeamMembers(data['MAKHDOOM'])
+                }
+            };
+            
+            // Process candidates
+            allCandidates = processCandidates(data['TOTAL CANDIDATES']);
+            
+            // Process schedule
+            scheduleData = processSchedule(data['SCHEDULE']);
+            
+            // Process team base
+            teamBaseData = processTeamBase(data['TEAM BASE']);
+            
+            // Process results
+            resultsData = processResults(data['RESULT']);
+            
+            // Update UI
+            updateAllSections();
+            
+            hideLoading();
+        } else {
+            throw new Error(result.message);
+        }
     } catch (error) {
         console.error('Error loading data:', error);
         hideLoading();
-        alert('Error loading data. Please refresh the page.');
+        showError('Error loading data. Please refresh the page.');
     }
 }
 
 function processTeamMembers(data) {
-    return data.map(row => ({
-        adNo: parseInt(row['AD NO'] || row['adNo'] || 0),
-        name: row['NAME'] || row['name'] || '',
-        stageCount: parseInt(row['STAGE'] || row['stage'] || row['stageCount'] || 0),
-        nonStageCount: parseInt(row['NON-STAGE'] || row['nonStage'] || row['nonStageCount'] || 0),
-        total: parseInt(row['TOTAL'] || row['total'] || 0)
+    // Skip header row
+    return data.slice(1).map(row => ({
+        adNo: parseInt(row[0]) || 0,
+        name: row[1] || '',
+        stageCount: parseInt(row[2]) || 0,
+        nonStageCount: parseInt(row[3]) || 0,
+        total: parseInt(row[4]) || 0
+    }));
+}
+
+function processCandidates(data) {
+    // Skip header row
+    return data.slice(1).map(row => ({
+        adNo: parseInt(row[0]) || 0,
+        name: row[1] || '',
+        team: row[2] || ''
+    }));
+}
+
+function processSchedule(data) {
+    // Skip header row
+    return data.slice(1).map(row => ({
+        date: row[0] || '',
+        time: row[1] || '',
+        event: row[2] || ''
     }));
 }
 
 function processTeamBase(data) {
     const result = {};
-    data.forEach(row => {
-        const team = (row['TEAM'] || row['team'] || '').toLowerCase();
+    // Skip header row
+    data.slice(1).forEach(row => {
+        const team = (row[0] || '').toLowerCase();
         if (team) {
             result[team] = {
-                stagePoints: parseInt(row['STAGE'] || row['stage'] || 0),
-                nonStagePoints: parseInt(row['NON-STAGE'] || row['nonStage'] || 0),
-                groupGeneral: parseInt(row['GROUP & GENERAL'] || row['groupGeneral'] || 0),
-                totalPoints: parseInt(row['TOTAL'] || row['total'] || 0),
-                percentage: parseFloat(row['PERCENTAGE'] || row['percentage'] || 0)
+                stagePoints: parseInt(row[1]) || 0,
+                nonStagePoints: parseInt(row[2]) || 0,
+                groupGeneral: parseInt(row[3]) || 0,
+                totalPoints: parseInt(row[4]) || 0,
+                percentage: parseFloat(row[5]) || 0
             };
         }
     });
@@ -150,44 +111,67 @@ function processTeamBase(data) {
 }
 
 function processResults(data) {
-    return data.map(row => ({
-        rank: parseInt(row['RANK'] || row['rank'] || 0),
-        team: row['TEAM'] || row['team'] || '',
-        stagePoints: parseInt(row['STAGE'] || row['stage'] || 0),
-        nonStagePoints: parseInt(row['NON-STAGE'] || row['nonStage'] || 0),
-        groupGeneral: parseInt(row['GROUP & GENERAL'] || row['groupGeneral'] || 0),
-        totalPoints: parseInt(row['TOTAL'] || row['total'] || 0),
-        percentage: parseFloat(row['PERCENTAGE'] || row['percentage'] || 0)
+    // Skip header row
+    return data.slice(1).map(row => ({
+        rank: parseInt(row[0]) || 0,
+        team: row[1] || '',
+        stagePoints: parseInt(row[2]) || 0,
+        nonStagePoints: parseInt(row[3]) || 0,
+        groupGeneral: parseInt(row[4]) || 0,
+        totalPoints: parseInt(row[5]) || 0,
+        percentage: parseFloat(row[6]) || 0
     }));
 }
 
 function showLoading() {
-    const loader = document.createElement('div');
-    loader.id = 'loadingOverlay';
-    loader.innerHTML = `
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-                    background: rgba(0,0,0,0.8); display: flex; align-items: center; 
-                    justify-content: center; z-index: 9999;">
-            <div style="text-align: center; color: white;">
-                <div style="border: 8px solid #f3f3f3; border-top: 8px solid #2563eb; 
-                            border-radius: 50%; width: 60px; height: 60px; 
-                            animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-                <p style="font-size: 1.2rem;">Loading data...</p>
+    let loader = document.getElementById('loadingOverlay');
+    if (!loader) {
+        loader = document.createElement('div');
+        loader.id = 'loadingOverlay';
+        loader.innerHTML = `
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                        background: rgba(0,0,0,0.8); display: flex; align-items: center; 
+                        justify-content: center; z-index: 9999;">
+                <div style="text-align: center; color: white;">
+                    <div style="border: 8px solid #f3f3f3; border-top: 8px solid #2563eb; 
+                                border-radius: 50%; width: 60px; height: 60px; 
+                                animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                    <p style="font-size: 1.2rem;">Loading data...</p>
+                </div>
             </div>
-        </div>
-        <style>
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-    `;
-    document.body.appendChild(loader);
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+        document.body.appendChild(loader);
+    }
 }
 
 function hideLoading() {
     const loader = document.getElementById('loadingOverlay');
     if (loader) loader.remove();
+}
+
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    `;
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    
+    setTimeout(() => errorDiv.remove(), 5000);
 }
 
 function updateAllSections() {
@@ -251,16 +235,13 @@ function updateSchedule() {
     
     // Group events by date
     const eventsByDate = {};
-    scheduleData.forEach(row => {
-        const date = row['DATE'] || row['date'] || '';
-        const time = row['TIME'] || row['time'] || '';
-        const event = row['EVENT'] || row['event'] || '';
-        
-        if (date && event) {
+    scheduleData.forEach(event => {
+        const date = event.date;
+        if (date) {
             if (!eventsByDate[date]) {
                 eventsByDate[date] = [];
             }
-            eventsByDate[date].push({ time, event });
+            eventsByDate[date].push(event);
         }
     });
     
@@ -341,7 +322,12 @@ function updateChart() {
     const nonStageData = resultsData.map(r => r.nonStagePoints);
     const groupData = resultsData.map(r => r.groupGeneral);
     
-    new Chart(ctx, {
+    // Destroy existing chart if it exists
+    if (window.resultsChartInstance) {
+        window.resultsChartInstance.destroy();
+    }
+    
+    window.resultsChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
@@ -371,53 +357,18 @@ function updateChart() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
             plugins: {
                 legend: {
-                    display: true,
                     position: 'top',
-                    labels: {
-                        font: {
-                            size: 14,
-                            weight: 'bold'
-                        },
-                        padding: 20
-                    }
                 },
                 title: {
                     display: true,
-                    text: 'Team Performance Comparison',
-                    font: {
-                        size: 18,
-                        weight: 'bold'
-                    },
-                    padding: 20
+                    text: 'Team Performance Comparison'
                 }
             },
             scales: {
-                x: {
-                    stacked: false,
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 12,
-                            weight: 'bold'
-                        }
-                    }
-                },
                 y: {
-                    stacked: false,
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        font: {
-                            size: 12
-                        }
-                    }
+                    beginAtZero: true
                 }
             }
         }
@@ -458,9 +409,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
     
-    if (hamburger) {
+    if (hamburger && navMenu) {
         hamburger.addEventListener('click', function() {
             navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
         });
     }
     
@@ -480,12 +432,34 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
     }
+    
+    // Update active nav link on scroll
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (pageYOffset >= sectionTop - 60) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    });
 });
 
-// Auto refresh data every 5 minutes
+// Auto refresh data every 2 minutes
 setInterval(() => {
     loadAllData();
-}, 5 * 60 * 1000);
+}, 2 * 60 * 1000);
 
 // ==========================================
 // TEAM DETAILS MODAL
@@ -497,6 +471,7 @@ function showTeamDetails(team) {
     const modalTeamMembers = document.getElementById('modalTeamMembers');
     
     const teamData = teamsData[team];
+    if (!teamData) return;
     
     modalTeamName.textContent = teamData.name + ' Team Members';
     
@@ -527,76 +502,6 @@ function showTeamDetails(team) {
         `;
     });
     membersHTML += '</div>';
-    
-    membersHTML += `
-        <style>
-            .modal-members-list {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                margin-top: 20px;
-            }
-            .modal-member-card {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-                padding: 20px;
-                background: var(--light-bg);
-                border-radius: 10px;
-                transition: all 0.3s ease;
-            }
-            .modal-member-card:hover {
-                background: #fff;
-                box-shadow: var(--shadow);
-                transform: translateX(5px);
-            }
-            .modal-member-number {
-                width: 40px;
-                height: 40px;
-                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-                color: white;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                flex-shrink: 0;
-            }
-            .modal-member-info {
-                flex: 1;
-            }
-            .modal-member-info h4 {
-                margin-bottom: 5px;
-                color: var(--text-dark);
-            }
-            .modal-member-info p {
-                color: var(--text-light);
-                font-size: 0.9rem;
-            }
-            .modal-member-stats {
-                display: flex;
-                gap: 15px;
-            }
-            .modal-stat {
-                text-align: center;
-                padding: 10px;
-                background: white;
-                border-radius: 8px;
-                min-width: 60px;
-            }
-            .modal-stat-value {
-                display: block;
-                font-size: 1.3rem;
-                font-weight: bold;
-                color: var(--primary-color);
-            }
-            .modal-stat-label {
-                display: block;
-                font-size: 0.75rem;
-                color: var(--text-light);
-            }
-        </style>
-    `;
     
     modalTeamMembers.innerHTML = membersHTML;
     modal.style.display = 'block';
@@ -635,6 +540,7 @@ function showResultsTable(type) {
     tableBtns.forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
     
+    // This would show different tables based on type
     console.log('Showing results for:', type);
 }
 
@@ -703,31 +609,3 @@ function displayCandidates(filterTeam) {
     
     candidatesGrid.innerHTML = html;
 }
-
-// ==========================================
-// SCROLL ANIMATIONS
-// ==========================================
-
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'all 0.6s ease';
-        observer.observe(section);
-    });
-});
