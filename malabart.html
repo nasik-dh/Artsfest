@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MALABART 2024-25 - Competition Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-trophy"></i>
+                <span>MALABART 2024-25</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#teams" class="nav-link">Teams</a></li>
+                <li><a href="#events" class="nav-link">Events</a></li>
+                <li><a href="#schedule" class="nav-link">Schedule</a></li>
+                <li><a href="#results" class="nav-link">Results</a></li>
+                <li><a href="#candidates" class="nav-link">Candidates</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title animate-fade-in">MALABART 2024-25</h1>
+            <p class="hero-subtitle animate-fade-in-delay">Excellence in Academic & Cultural Competition</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3>33</h3>
+                    <p>Total Candidates</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-flag"></i>
+                    <h3>3</h3>
+                    <p>Teams</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-list"></i>
+                    <h3>42</h3>
+                    <p>Events</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar"></i>
+                    <h3>5</h3>
+                    <p>Days</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Teams Section -->
+    <section id="teams" class="teams-section">
+        <div class="container">
+            <h2 class="section-title">Our Teams</h2>
+            <p class="section-subtitle">Meet the competing teams of MALABART 2024-25</p>
+            
+            <div class="teams-grid">
+                <!-- Team 1: ARAKKAL -->
+                <div class="team-card" data-team="arakkal">
+                    <div class="team-header arakkal-bg">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>ARAKKAL</h3>
+                    </div>
+                    <div class="team-body">
+                        <div class="team-stats">
+                            <div class="stat">
+                                <span class="stat-label">Members</span>
+                                <span class="stat-value">11</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Total Points</span>
+                                <span class="stat-value">217</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Percentage</span>
+                                <span class="stat-value">30.78%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="showTeamDetails('arakkal')">
+                            View Members <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Team 2: MARAKKAR -->
+                <div class="team-card" data-team="marakkar">
+                    <div class="team-header marakkar-bg">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>MARAKKAR</h3>
+                    </div>
+                    <div class="team-body">
+                        <div class="team-stats">
+                            <div class="stat">
+                                <span class="stat-label">Members</span>
+                                <span class="stat-value">11</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Total Points</span>
+                                <span class="stat-value">219</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Percentage</span>
+                                <span class="stat-value">31.06%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="showTeamDetails('marakkar')">
+                            View Members <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Team 3: MAKHDOOM -->
+                <div class="team-card" data-team="makhdoom">
+                    <div class="team-header makhdoom-bg">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>MAKHDOOM</h3>
+                    </div>
+                    <div class="team-body">
+                        <div class="team-stats">
+                            <div class="stat">
+                                <span class="stat-label">Members</span>
+                                <span class="stat-value">11</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Total Points</span>
+                                <span class="stat-value">257</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Percentage</span>
+                                <span class="stat-value">36.45%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="showTeamDetails('makhdoom')">
+                            View Members <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Rankings -->
+            <div class="rankings-section">
+                <h3 class="rankings-title">Team Rankings</h3>
+                <div class="rankings-podium">
+                    <div class="podium-item second-place">
+                        <div class="podium-medal">
+                            <i class="fas fa-medal"></i>
+                            <span class="medal-number">2</span>
+                        </div>
+                        <h4>MARAKKAR</h4>
+                        <p class="podium-score">219 Points</p>
+                        <p class="podium-percentage">31.06%</p>
+                    </div>
+                    <div class="podium-item first-place">
+                        <div class="podium-medal">
+                            <i class="fas fa-crown"></i>
+                            <span class="medal-number">1</span>
+                        </div>
+                        <h4>MAKHDOOM</h4>
+                        <p class="podium-score">257 Points</p>
+                        <p class="podium-percentage">36.45%</p>
+                    </div>
+                    <div class="podium-item third-place">
+                        <div class="podium-medal">
+                            <i class="fas fa-medal"></i>
+                            <span class="medal-number">3</span>
+                        </div>
+                        <h4>ARAKKAL</h4>
+                        <p class="podium-score">217 Points</p>
+                        <p class="podium-percentage">30.78%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="events-section">
+        <div class="container">
+            <h2 class="section-title">Competition Events</h2>
+            <p class="section-subtitle">42 Events across Stage and Non-Stage Categories</p>
+            
+            <div class="events-filter">
+                <button class="filter-btn active" onclick="filterEvents('all')">All Events</button>
+                <button class="filter-btn" onclick="filterEvents('stage')">Stage Events</button>
+                <button class="filter-btn" onclick="filterEvents('non-stage')">Non-Stage Events</button>
+                <button class="filter-btn" onclick="filterEvents('group')">Group Events</button>
+            </div>
+
+            <!-- Stage Events -->
+            <div class="events-category" data-category="stage">
+                <h3 class="category-title">
+                    <i class="fas fa-microphone"></i> Stage Events
+                </h3>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-book-quran"></i></div>
+                        <h4>QIRATH</h4>
+                        <p>Quranic Recitation</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-book-open"></i></div>
+                        <h4>HIFZ</h4>
+                        <p>Quran Memorization</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-book-reader"></i></div>
+                        <h4>STORY NARRATION MLM</h4>
+                        <p>Malayalam Story Telling</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-scroll"></i></div>
+                        <h4>PADHYAPARAYANAM</h4>
+                        <p>Poetry Recitation</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-music"></i></div>
+                        <h4>SONG ARB</h4>
+                        <p>Arabic Song</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-music"></i></div>
+                        <h4>SONG ENG</h4>
+                        <p>English Song</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-music"></i></div>
+                        <h4>SONG MLM</h4>
+                        <p>Malayalam Song</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-music"></i></div>
+                        <h4>SONG URD</h4>
+                        <p>Urdu Song</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-pen-fancy"></i></div>
+                        <h4>KAVIYARANG</h4>
+                        <p>Poetry Arena</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-microphone-alt"></i></div>
+                        <h4>SPEECH ARB</h4>
+                        <p>Arabic Speech</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-microphone-alt"></i></div>
+                        <h4>SPEECH ENG</h4>
+                        <p>English Speech</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-microphone-alt"></i></div>
+                        <h4>SPEECH MLM</h4>
+                        <p>Malayalam Speech</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-microphone-alt"></i></div>
+                        <h4>SPEECH URD</h4>
+                        <p>Urdu Speech</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-praying-hands"></i></div>
+                        <h4>WA'Z</h4>
+                        <p>Religious Discourse</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <h4>MAP STUDY</h4>
+                        <p>Geography Knowledge</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-question-circle"></i></div>
+                        <h4>GK QUIZ</h4>
+                        <p>General Knowledge</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-language"></i></div>
+                        <h4>GRAMMAR QUIZ</h4>
+                        <p>Language Grammar</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-calculator"></i></div>
+                        <h4>MATH TALENT</h4>
+                        <p>Mathematics</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-flag"></i></div>
+                        <h4>NJAN MALAYALI</h4>
+                        <p>Malayalam Culture</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Non-Stage Events -->
+            <div class="events-category" data-category="non-stage">
+                <h3 class="category-title">
+                    <i class="fas fa-laptop"></i> Non-Stage Events
+                </h3>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-spell-check"></i></div>
+                        <h4>SPELLING BEE</h4>
+                        <p>Spelling Competition</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-pen"></i></div>
+                        <h4>ESSAY MLM</h4>
+                        <p>Malayalam Essay</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-file-alt"></i></div>
+                        <h4>SARF IQ</h4>
+                        <p>Arabic Grammar</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-newspaper"></i></div>
+                        <h4>NEWS WRITING MLM</h4>
+                        <p>News Writing & Reading</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-file-word"></i></div>
+                        <h4>MS WORD</h4>
+                        <p>Word Processing</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-keyboard"></i></div>
+                        <h4>TYPING ENG</h4>
+                        <p>English Typing</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-paint-brush"></i></div>
+                        <h4>MS PAINT</h4>
+                        <p>Digital Painting</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-feather-alt"></i></div>
+                        <h4>POEM ENG</h4>
+                        <p>English Poetry</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-feather-alt"></i></div>
+                        <h4>POEM MLM</h4>
+                        <p>Malayalam Poetry</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-image"></i></div>
+                        <h4>IMAGE ELABORATION</h4>
+                        <p>Image Description</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-book"></i></div>
+                        <h4>SHORT STORY MLM</h4>
+                        <p>Short Story Writing</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-heart"></i></div>
+                        <h4>APPRECIATION MLM</h4>
+                        <p>Literary Appreciation</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-journal-whills"></i></div>
+                        <h4>DIARY WRITING MLM</h4>
+                        <p>Diary Entry</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-palette"></i></div>
+                        <h4>POSTER DESIGNING</h4>
+                        <p>Poster Creation</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-brain"></i></div>
+                        <h4>MEMORY TEST</h4>
+                        <p>Memory Skills</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-comment-dots"></i></div>
+                        <h4>MULAFAZA ARB</h4>
+                        <p>Arabic Conversation</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-comments"></i></div>
+                        <h4>WORD FIGHT ENG</h4>
+                        <p>Word Battle</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-pencil-alt"></i></div>
+                        <h4>PENCIL DRAWING</h4>
+                        <p>Pencil Art</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-th"></i></div>
+                        <h4>SUDOKU</h4>
+                        <p>Number Puzzle</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-spell-check"></i></div>
+                        <h4>VOCABULARY</h4>
+                        <p>Word Knowledge</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-book-open"></i></div>
+                        <h4>STORY COMPLETION MLM</h4>
+                        <p>Story Ending</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group Events -->
+            <div class="events-category" data-category="group">
+                <h3 class="category-title">
+                    <i class="fas fa-users"></i> Group Events
+                </h3>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-music"></i></div>
+                        <h4>GROUP SONG</h4>
+                        <p>Team Performance</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-pray"></i></div>
+                        <h4>QAWWALI</h4>
+                        <p>Devotional Music</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule" class="schedule-section">
+        <div class="container">
+            <h2 class="section-title">Event Schedule</h2>
+            <p class="section-subtitle">Competition dates: December 22-26, 2024</p>
+            
+            <div class="schedule-timeline">
+                <!-- Day 1 -->
+                <div class="schedule-day">
+                    <div class="day-header">
+                        <div class="day-date">
+                            <span class="date-num">22</span>
+                            <span class="date-month">DEC</span>
+                        </div>
+                        <div class="day-info">
+                            <h3>Sunday</h3>
+                            <p>Day 1</p>
+                        </div>
+                    </div>
+                    <div class="day-events">
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 AM</span>
+                            <span class="event-name">PENCIL DRAWING</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 AM</span>
+                            <span class="event-name">ESSAY WRITING MLM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="schedule-day">
+                    <div class="day-header">
+                        <div class="day-date">
+                            <span class="date-num">23</span>
+                            <span class="date-month">DEC</span>
+                        </div>
+                        <div class="day-info">
+                            <h3>Monday</h3>
+                            <p>Day 2</p>
+                        </div>
+                    </div>
+                    <div class="day-events">
+                        <div class="schedule-event">
+                            <span class="event-time">05:00 AM</span>
+                            <span class="event-name">SHORT STORY MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">05:00 AM</span>
+                            <span class="event-name">SPELLING BEE</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 AM</span>
+                            <span class="event-name">IMAGE ELABORATION</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 AM</span>
+                            <span class="event-name">MEMORY TEST</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 3 -->
+                <div class="schedule-day">
+                    <div class="day-header">
+                        <div class="day-date">
+                            <span class="date-num">24</span>
+                            <span class="date-month">DEC</span>
+                        </div>
+                        <div class="day-info">
+                            <h3>Tuesday</h3>
+                            <p>Day 3</p>
+                        </div>
+                    </div>
+                    <div class="day-events">
+                        <div class="schedule-event">
+                            <span class="event-time">06:50 AM</span>
+                            <span class="event-name">NEWS WRITING & READING MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">06:50 AM</span>
+                            <span class="event-name">SUDOKU</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">02:00 PM</span>
+                            <span class="event-name">QIRATH</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">02:30 PM</span>
+                            <span class="event-name">STORY NARRATION MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">03:00 PM</span>
+                            <span class="event-name">SONG MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">03:30 PM</span>
+                            <span class="event-name">SPEECH MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">05:00 PM</span>
+                            <span class="event-name">KAVIYARANG (WRITING)</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">05:00 PM</span>
+                            <span class="event-name">POEM ENG</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 PM</span>
+                            <span class="event-name">KAVIYARANG (PRESENTATION)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 4 -->
+                <div class="schedule-day">
+                    <div class="day-header">
+                        <div class="day-date">
+                            <span class="date-num">25</span>
+                            <span class="date-month">DEC</span>
+                        </div>
+                        <div class="day-info">
+                            <h3>Wednesday</h3>
+                            <p>Day 4</p>
+                        </div>
+                    </div>
+                    <div class="day-events">
+                        <div class="schedule-event">
+                            <span class="event-time">06:50 AM</span>
+                            <span class="event-name">VOCABULARY</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">06:50 AM</span>
+                            <span class="event-name">APPRECIATION MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">05:00 PM</span>
+                            <span class="event-name">STORY COMPLETION MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 PM</span>
+                            <span class="event-name">POSTER DESIGNING</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">09:40 PM</span>
+                            <span class="event-name">NJAN MALAYALI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 5 -->
+                <div class="schedule-day">
+                    <div class="day-header">
+                        <div class="day-date">
+                            <span class="date-num">26</span>
+                            <span class="date-month">DEC</span>
+                        </div>
+                        <div class="day-info">
+                            <h3>Thursday</h3>
+                            <p>Day 5</p>
+                        </div>
+                    </div>
+                    <div class="day-events">
+                        <div class="schedule-event">
+                            <span class="event-time">06:50 AM</span>
+                            <span class="event-name">DIARY WRITING MLM</span>
+                        </div>
+                        <div class="schedule-event">
+                            <span class="event-time">06:50 AM</span>
+                            <span class="event-name">WORD FIGHT ENG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section">
+        <div class="container">
+            <h2 class="section-title">Competition Results</h2>
+            <p class="section-subtitle">Overall team performance and rankings</p>
+            
+            <!-- Results Chart -->
+            <div class="results-chart">
+                <canvas id="resultsChart"></canvas>
+            </div>
+
+            <!-- Detailed Results Table -->
+            <div class="results-table-container">
+                <div class="table-controls">
+                    <button class="table-btn active" onclick="showResultsTable('overall')">Overall</button>
+                    <button class="table-btn" onclick="showResultsTable('stage')">Stage Events</button>
+                    <button class="table-btn" onclick="showResultsTable('nonstage')">Non-Stage Events</button>
+                </div>
+                
+                <div class="results-table-wrapper">
+                    <table class="results-table" id="overallTable">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Stage Points</th>
+                                <th>Non-Stage Points</th>
+                                <th>Group & General</th>
+                                <th>Total Points</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rank-1">
+                                <td><span class="rank-badge gold">1st</span></td>
+                                <td><strong>MAKHDOOM</strong></td>
+                                <td>105</td>
+                                <td>117</td>
+                                <td>37</td>
+                                <td><strong>257</strong></td>
+                                <td>36.45%</td>
+                            </tr>
+                            <tr class="rank-2">
+                                <td><span class="rank-badge silver">2nd</span></td>
+                                <td><strong>MARAKKAR</strong></td>
+                                <td>85</td>
+                                <td>100</td>
+                                <td>36</td>
+                                <td><strong>219</strong></td>
+                                <td>31.06%</td>
+                            </tr>
+                            <tr class="rank-3">
+                                <td><span class="rank-badge bronze">3rd</span></td>
+                                <td><strong>ARAKKAL</strong></td>
+                                <td>94</td>
+                                <td>96</td>
+                                <td>35</td>
+                                <td><strong>217</strong></td>
+                                <td>30.78%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Top Performers -->
+            <div class="top-performers">
+                <h3 class="performers-title">Top Individual Performers</h3>
+                <div class="performers-grid">
+                    <div class="performer-card">
+                        <div class="performer-rank">1</div>
+                        <h4>MUHAMMED ZIYAD C</h4>
+                        <p class="performer-team">MAKHDOOM</p>
+                        <p class="performer-score">43 Points</p>
+                    </div>
+                    <div class="performer-card">
+                        <div class="performer-rank">2</div>
+                        <h4>HAMDAN CC</h4>
+                        <p class="performer-team">ARAKKAL</p>
+                        <p class="performer-score">31 Points</p>
+                    </div>
+                    <div class="performer-card">
+                        <div class="performer-rank">3</div>
+                        <h4>SAIDALAVI SHAMIL MC</h4>
+                        <p class="performer-team">MARAKKAR</p>
+                        <p class="performer-score">31 Points</p>
+                    </div>
+                    <div class="performer-card">
+                        <div class="performer-rank">4</div>
+                        <h4>MUHAMMED MUSTHAFA SM</h4>
+                        <p class="performer-team">MARAKKAR</p>
+                        <p class="performer-score">30 Points</p>
+                    </div>
+                    <div class="performer-card">
+                        <div class="performer-rank">5</div>
+                        <h4>MUHAMMED SAHL</h4>
+                        <p class="performer-team">MAKHDOOM</p>
+                        <p class="performer-score">30 Points</p>
+                    </div>
+                    <div class="performer-card">
+                        <div class="performer-rank">6</div>
+                        <h4>SAHL SHAN O</h4>
+                        <p class="performer-team">ARAKKAL</p>
+                        <p class="performer-score">29 Points</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Candidates Section -->
+    <section id="candidates" class="candidates-section">
+        <div class="container">
+            <h2 class="section-title">All Candidates</h2>
+            <p class="section-subtitle">Complete list of 33 participating candidates</p>
+            
+            <div class="candidates-filter">
+                <button class="filter-btn active" onclick="filterCandidates('all')">All Teams</button>
+                <button class="filter-btn" onclick="filterCandidates('arakkal')">ARAKKAL</button>
+                <button class="filter-btn" onclick="filterCandidates('marakkar')">MARAKKAR</button>
+                <button class="filter-btn" onclick="filterCandidates('makhdoom')">MAKHDOOM</button>
+            </div>
+
+            <div class="candidates-grid" id="candidatesGrid">
+                <!-- Candidates will be dynamically loaded -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-trophy"></i> MALABART 2024-25</h3>
+                    <p>Excellence in Academic & Cultural Competition</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#teams">Teams</a></li>
+                        <li><a href="#events">Events</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> info@malabart.com</li>
+                        <li><i class="fas fa-phone"></i> +91 1234567890</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MALABART. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for Team Details -->
+    <div id="teamModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="modalTeamName"></h2>
+            <div id="modalTeamMembers"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
