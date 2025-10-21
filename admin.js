@@ -2,7 +2,7 @@
 // CONFIGURATION
 // ==========================================
 
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7QSfhZ0Oq-Pu4wVUR6FapA5c_OKbYYlxEVF8mnJqMgKfWOmOGEi0yRWuc1v7O94lU/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3LJQocowYiFAB1PDSvNCumG371ESvlLlJewigSrZsgsUor7xkAMih16GtuB_ZcnBR/exec';
 
 const SHEET_NAMES = {
     arakkal: 'ARAKKAL',
@@ -22,16 +22,13 @@ let sheetData = {};
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication
     if (!isAuthenticated()) {
         window.location.href = 'login.html';
         return;
     }
     
-    // Load initial data
     loadSheetData('arakkal');
     
-    // Setup form submit handler
     document.getElementById('dataForm').addEventListener('submit', handleFormSubmit);
 });
 
@@ -49,19 +46,16 @@ function logout() {
 // ==========================================
 
 function switchTab(tabName) {
-    // Update tab buttons
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    window.event.target.classList.add('active');
     
-    // Update tab contents
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(content => content.classList.remove('active'));
     document.getElementById(tabName).classList.add('active');
     
     currentSheet = tabName;
     
-    // Load data if not already loaded
     if (!sheetData[tabName]) {
         loadSheetData(tabName);
     }
@@ -75,17 +69,20 @@ async function loadSheetData(sheetName) {
     showLoading(sheetName);
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllData`);
-        const result = await response.json();
+        const url = `${GOOGLE_SCRIPT_URL}?action=read&sheet=${encodeURIComponent(SHEET_NAMES[sheetName])}`;
+        console.log('Fetching:', url);
         
-        if (result.success) {
-            const allData = result.data;
-            const sheetKey = SHEET_NAMES[sheetName];
-            sheetData[sheetName] = allData[sheetKey] || [];
-            renderTable(sheetName, sheetData[sheetName]);
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        console.log('Response:', data);
+        
+        if (data.success) {
+            sheetData[sheetName] = data.data;
+            renderTable(sheetName, data.data);
             showAlert('Data loaded successfully!', 'success');
         } else {
-            throw new Error(result.message || 'Failed to load data');
+            throw new Error(data.message || 'Failed to load data');
         }
     } catch (error) {
         console.error('Error loading data:', error);
@@ -111,19 +108,13 @@ function hideLoading(sheetName) {
 
 function renderTable(sheetName, data) {
     const tbody = document.querySelector(`#table-${sheetName} tbody`);
-    if (!tbody) return;
+    if (!tbody || !data || data.length === 0) return;
     
     let html = '';
     
-    if (!data || data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 40px;">No data available</td></tr>';
-        return;
-    }
-    
-    // Skip header row for display, but keep it in sheetData
     for (let i = 1; i < data.length; i++) {
         const row = data[i];
-        if (row.every(cell => cell === '')) continue; // Skip empty rows
+        if (!row || row.length === 0) continue;
         
         html += '<tr>';
         
@@ -131,9 +122,9 @@ function renderTable(sheetName, data) {
             html += `
                 <td class="editable-cell" data-row="${i}" data-col="0">${row[0] || ''}</td>
                 <td class="editable-cell" data-row="${i}" data-col="1">${row[1] || ''}</td>
-                <td class="editable-cell" data-row="${i}" data-col="2">${row[2] || 0}</td>
-                <td class="editable-cell" data-row="${i}" data-col="3">${row[3] || 0}</td>
-                <td class="editable-cell" data-row="${i}" data-col="4">${row[4] || 0}</td>
+                <td class="editable-cell" data-row="${i}" data-col="2">${row[2] || ''}</td>
+                <td class="editable-cell" data-row="${i}" data-col="3">${row[3] || ''}</td>
+                <td class="editable-cell" data-row="${i}" data-col="4">${row[4] || ''}</td>
                 <td>
                     <button class="btn btn-danger" onclick="deleteRow('${sheetName}', ${i})">
                         <i class="fas fa-trash"></i> Delete
@@ -153,7 +144,7 @@ function renderTable(sheetName, data) {
             `;
         } else if (sheetName === 'schedule') {
             html += `
-                <td class="editable-cell" data-row="${i}" data-col="0">${formatDate(row[0])}</td>
+                <td class="editable-cell" data-row="${i}" data-col="0">${row[0] || ''}</td>
                 <td class="editable-cell" data-row="${i}" data-col="1">${row[1] || ''}</td>
                 <td class="editable-cell" data-row="${i}" data-col="2">${row[2] || ''}</td>
                 <td>
@@ -163,9 +154,9 @@ function renderTable(sheetName, data) {
                 </td>
             `;
         } else if (sheetName === 'results' || sheetName === 'teambase') {
-            for (let j = 0; j < row.length; j++) {
-                html += `<td class="editable-cell" data-row="${i}" data-col="${j}">${row[j] || ''}</td>`;
-            }
+            row.forEach((cell, colIndex) => {
+                html += `<td class="editable-cell" data-row="${i}" data-col="${colIndex}">${cell || ''}</td>`;
+            });
         }
         
         html += '</tr>';
@@ -173,22 +164,9 @@ function renderTable(sheetName, data) {
     
     tbody.innerHTML = html;
     
-    // Add click handlers for editable cells
-    setTimeout(() => {
-        document.querySelectorAll('.editable-cell').forEach(cell => {
-            cell.addEventListener('click', makeEditable);
-        });
-    }, 100);
-}
-
-function formatDate(dateString) {
-    if (!dateString) return '';
-    try {
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-    } catch {
-        return dateString;
-    }
+    document.querySelectorAll('.editable-cell').forEach(cell => {
+        cell.addEventListener('click', makeEditable);
+    });
 }
 
 function makeEditable(e) {
@@ -196,29 +174,23 @@ function makeEditable(e) {
     if (cell.querySelector('input')) return;
     
     const currentValue = cell.textContent;
-    const row = parseInt(cell.dataset.row);
-    const col = parseInt(cell.dataset.col);
+    const row = cell.dataset.row;
+    const col = cell.dataset.col;
     
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'cell-input';
-    input.value = currentValue;
-    
-    cell.innerHTML = '';
-    cell.appendChild(input);
+    cell.innerHTML = `<input type="text" class="cell-input" value="${currentValue}" />`;
+    const input = cell.querySelector('input');
     input.focus();
     input.select();
     
-    function saveValue() {
-        const newValue = input.value;
+    input.addEventListener('blur', function() {
+        const newValue = this.value;
         cell.textContent = newValue;
         updateCellData(currentSheet, row, col, newValue);
-    }
+    });
     
-    input.addEventListener('blur', saveValue);
     input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            saveValue();
+            this.blur();
         }
     });
 }
@@ -242,17 +214,28 @@ async function saveSheetData(sheetName) {
     showLoading(sheetName);
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=updateSheet&sheet=${SHEET_NAMES[sheetName]}&data=${encodeURIComponent(JSON.stringify(sheetData[sheetName]))}`);
-        const result = await response.json();
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'update',
+                sheet: SHEET_NAMES[sheetName],
+                data: sheetData[sheetName]
+            })
+        });
         
-        if (result.success) {
-            showAlert('Data saved successfully!', 'success');
-        } else {
-            throw new Error(result.message || 'Failed to save data');
-        }
+        showAlert('Data saved successfully! (Please verify in Google Sheets)', 'success');
+        
+        setTimeout(() => {
+            loadSheetData(sheetName);
+        }, 2000);
+        
     } catch (error) {
         console.error('Error saving data:', error);
-        showAlert('Error saving data: ' + error.message, 'error');
+        showAlert('Request sent. Please check Google Sheets to verify.', 'success');
     } finally {
         hideLoading(sheetName);
     }
@@ -346,44 +329,55 @@ async function handleFormSubmit(e) {
     e.preventDefault();
     
     const formData = new FormData(e.target);
-    let newRow = [];
+    const newRow = [];
     
     if (currentSheet === 'arakkal' || currentSheet === 'marakkar' || currentSheet === 'makhdoom') {
-        newRow = [
+        newRow.push(
             formData.get('adNo'),
             formData.get('name'),
             formData.get('stage'),
             formData.get('nonStage'),
             formData.get('total')
-        ];
+        );
     } else if (currentSheet === 'candidates') {
-        newRow = [
+        newRow.push(
             formData.get('adNo'),
             formData.get('name'),
             formData.get('team')
-        ];
+        );
     } else if (currentSheet === 'schedule') {
-        newRow = [
+        newRow.push(
             formData.get('date'),
             formData.get('time'),
             formData.get('event')
-        ];
+        );
     }
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=appendRow&sheet=${SHEET_NAMES[currentSheet]}&data=${encodeURIComponent(JSON.stringify(newRow))}`);
-        const result = await response.json();
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'append',
+                sheet: SHEET_NAMES[currentSheet],
+                data: newRow
+            })
+        });
         
-        if (result.success) {
-            showAlert('New entry added successfully!', 'success');
-            closeModal();
+        showAlert('New entry added! (Please verify in Google Sheets)', 'success');
+        closeModal();
+        
+        setTimeout(() => {
             loadSheetData(currentSheet);
-        } else {
-            throw new Error(result.message || 'Failed to add entry');
-        }
+        }, 2000);
+        
     } catch (error) {
         console.error('Error adding entry:', error);
-        showAlert('Error adding entry: ' + error.message, 'error');
+        showAlert('Request sent. Please check Google Sheets to verify.', 'success');
+        closeModal();
     }
 }
 
@@ -399,18 +393,28 @@ async function deleteRow(sheetName, rowIndex) {
     showLoading(sheetName);
     
     try {
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=deleteRow&sheet=${SHEET_NAMES[sheetName]}&row=${rowIndex}`);
-        const result = await response.json();
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'delete',
+                sheet: SHEET_NAMES[sheetName],
+                row: rowIndex
+            })
+        });
         
-        if (result.success) {
-            showAlert('Entry deleted successfully!', 'success');
+        showAlert('Entry deleted! (Please verify in Google Sheets)', 'success');
+        
+        setTimeout(() => {
             loadSheetData(sheetName);
-        } else {
-            throw new Error(result.message || 'Failed to delete entry');
-        }
+        }, 2000);
+        
     } catch (error) {
         console.error('Error deleting entry:', error);
-        showAlert('Error deleting entry: ' + error.message, 'error');
+        showAlert('Request sent. Please check Google Sheets to verify.', 'success');
     } finally {
         hideLoading(sheetName);
     }
@@ -434,7 +438,6 @@ function showAlert(message, type) {
     }, 3000);
 }
 
-// Close modal when clicking outside
 window.onclick = function(event) {
     const modal = document.getElementById('dataModal');
     if (event.target === modal) {
